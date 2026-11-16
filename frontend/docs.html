@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AuraID — System Architecture & REST API Documentation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/css/aura-cyber.css">
+  <style>
+    .docs-container {
+      max-width: 1200px;
+      margin: 3rem auto;
+      padding: 0 2rem;
+    }
+    .endpoint-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .method-tag {
+      display: inline-block;
+      font-weight: 700;
+      font-size: 0.8rem;
+      padding: 0.25rem 0.6rem;
+      border-radius: 6px;
+      margin-right: 0.5rem;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .method-post { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); }
+    .method-get { background: rgba(6, 182, 212, 0.2); color: #22d3ee; border: 1px solid rgba(6, 182, 212, 0.4); }
+    .method-delete { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); }
+    pre {
+      background: #06050e;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      padding: 1rem;
+      overflow-x: auto;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      color: #cbd5e1;
+      margin-top: 0.75rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="ambient-glow-1"></div>
+  <div class="ambient-glow-2"></div>
+
+  <nav class="aura-nav">
+    <a href="/" class="brand-logo">
+      <div class="brand-icon">
+        <i class="fa-solid fa-shield-halved"></i>
+      </div>
+      <span>Aura<span style="color: var(--cyan);">ID</span> Docs</span>
+    </a>
+    <div class="nav-actions">
+      <a href="/dashboard" class="btn-aura-outline"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
+      <a href="/" class="btn-aura-primary"><i class="fa-solid fa-camera"></i> Live Scanner</a>
+    </div>
+  </nav>
+
+  <div class="docs-container">
+    <div style="margin-bottom: 2.5rem;">
+      <h1 style="font-size: 2.4rem; font-weight: 800; margin-bottom: 0.5rem;">AuraID Technical Architecture & REST API</h1>
+      <p style="color: var(--text-muted); font-size: 1.05rem;">
+        Production OpenAPI reference, biometric fusion mathematics, and Google Colab execution instructions.
+      </p>
+    </div>
+
+    <!-- Core Fusion Math -->
+    <div class="endpoint-card" style="border-color: var(--border-glow);">
+      <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem; color: #c4b5fd;">
+        <i class="fa-solid fa-brain"></i> Zero-Trust Decision Fusion Formula
+      </h3>
+      <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.6;">
+        To prevent presentation attacks while maintaining sub-second latency, AuraID fuses multi-spectral liveness before evaluating identity similarity:
+      </p>
+      <pre><code># Multi-Model Liveness Score
+Liveness_Score = 0.45 * MultiFTNet_Fourier + 0.35 * MiniFASNet_Color + 0.20 * Temporal_LSTM
+
+# Access Decision Rule
+IF Identity_Similarity >= 0.65 AND Liveness_Score >= 0.70:
+    RETURN ACCESS_GRANTED
+ELSE IF Liveness_Score < 0.70:
+    RETURN SPOOF_DETECTED (Attack_Type: Screen | Photo | Mask | Replay)
+ELSE:
+    RETURN ACCESS_DENIED (Reason: Low Identity Confidence or Unknown User)</code></pre>
+    </div>
+
+    <!-- API Reference -->
+    <h2 style="font-size: 1.6rem; font-weight: 700; margin: 2rem 0 1rem 0;">REST API Endpoints</h2>
+
+    <!-- POST /api/authenticate -->
+    <div class="endpoint-card">
+      <div>
+        <span class="method-tag method-post">POST</span>
+        <code style="font-size: 1.05rem; font-weight: 700; color: #fff;">/api/authenticate</code>
+      </div>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.5rem;">
+        Primary real-time authentication pipeline. Receives a webcam JPEG frame in base64, runs face detection, alignment, ArcFace feature extraction, 2D Fourier MultiFTNet, chromatic MiniFASNet, and temporal LSTM motion analysis.
+      </p>
+      <pre><code>// Request Body
+{
+  "image": "data:image/jpeg;base64,...",
+  "user_id": null, // Optional: specific user ID for 1:1 match, or null for 1:N gallery search
+  "simulate_attack": null // Optional: "printed_photo" | "mobile_screen" | "3d_mask" | "replay_video"
+}
+
+// Response (200 OK)
+{
+  "status": "success",
+  "decision": "ACCESS_GRANTED",
+  "granted": true,
+  "user": { "id": 1, "name": "Sarah Connor", "email": "demo@auraid.cyber" },
+  "identity_score": 0.9842,
+  "liveness_score": 0.9450,
+  "scores_breakdown": {
+    "arcface_identity": 0.9842,
+    "multiftnet_fourier": 0.9620,
+    "minifasnet_color": 0.9380,
+    "lstm_temporal": 0.8800
+  },
+  "attack_type": "none",
+  "latency_ms": 14.2
+}</code></pre>
+    </div>
+
+    <!-- POST /api/enroll-face -->
+    <div class="endpoint-card">
+      <div>
+        <span class="method-tag method-post">POST</span>
+        <code style="font-size: 1.05rem; font-weight: 700; color: #fff;">/api/enroll-face</code>
+      </div>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.5rem;">
+        Enrolls a new face template. Assesses sharpness & illumination, aligns landmarks, computes 512-D ArcFace embedding, and stores into the gallery database.
+      </p>
+      <pre><code>// Request Body
+{
+  "user_id": 1,
+  "image": "data:image/jpeg;base64,...",
+  "angle": "frontal"
+}</code></pre>
+    </div>
+
+    <!-- POST /api/register -->
+    <div class="endpoint-card">
+      <div>
+        <span class="method-tag method-post">POST</span>
+        <code style="font-size: 1.05rem; font-weight: 700; color: #fff;">/api/register</code>
+      </div>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.5rem;">
+        Creates a new user profile with bcrypt password hashing and issues a signed JWT token.
+      </p>
+    </div>
+
+    <!-- GET /api/dashboard/stats -->
+    <div class="endpoint-card">
+      <div>
+        <span class="method-tag method-get">GET</span>
+        <code style="font-size: 1.05rem; font-weight: 700; color: #fff;">/api/dashboard/stats</code>
+      </div>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.5rem;">
+        Returns high-level cybersecurity SOC metrics: total users, enrolled faces, authentication attempts, intercepted spoof attacks, APCER, BPCER, ACER, and EER.
+      </p>
+    </div>
+
+    <!-- GET /api/logs -->
+    <div class="endpoint-card">
+      <div>
+        <span class="method-tag method-get">GET</span>
+        <code style="font-size: 1.05rem; font-weight: 700; color: #fff;">/api/logs</code>
+      </div>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.5rem;">
+        Retrieves recent authentication audit logs with optional filtering by decision (e.g. <code>?decision=SPOOF_DETECTED</code>).
+      </p>
+    </div>
+  </div>
+</body>
+</html>

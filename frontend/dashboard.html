@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AuraID — Cybersecurity Admin & Biometric Threat Dashboard</title>
+  <!-- Google Fonts & FontAwesome -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Aura Cyber CSS -->
+  <link rel="stylesheet" href="/css/aura-cyber.css">
+  <style>
+    .dashboard-container {
+      max-width: 1440px;
+      margin: 2rem auto;
+      padding: 0 2rem;
+    }
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 2rem;
+    }
+    .metric-card {
+      background: var(--bg-card);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 1.25rem;
+      transition: all 0.3s ease;
+    }
+    .metric-card:hover {
+      border-color: var(--border-glow);
+      transform: translateY(-3px);
+    }
+    .metric-title {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .metric-value {
+      font-size: 1.8rem;
+      font-weight: 800;
+      margin-top: 0.5rem;
+      color: #fff;
+    }
+    .metric-sub {
+      font-size: 0.8rem;
+      color: var(--emerald);
+      margin-top: 0.35rem;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+    .charts-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    .chart-panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 20px;
+      padding: 1.5rem;
+    }
+    .table-panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 20px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    .aura-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+      font-size: 0.85rem;
+    }
+    .aura-table th {
+      text-align: left;
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .aura-table td {
+      padding: 0.85rem 1rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      color: #e2e8f0;
+    }
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.25rem 0.65rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .badge-granted { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+    .badge-spoof { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
+    .badge-denied { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+    .badge-unknown { background: rgba(148, 163, 184, 0.15); color: #cbd5e1; border: 1px solid rgba(148, 163, 184, 0.3); }
+
+    .tabs-nav {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border-subtle);
+      padding-bottom: 0.75rem;
+    }
+    .tab-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      transition: all 0.2s ease;
+    }
+    .tab-btn.active {
+      background: rgba(139, 92, 246, 0.2);
+      color: #fff;
+      border: 1px solid var(--border-glow);
+    }
+  </style>
+</head>
+<body>
+  <!-- Ambient background glow orbs -->
+  <div class="ambient-glow-1"></div>
+  <div class="ambient-glow-2"></div>
+
+  <!-- Navigation -->
+  <nav class="aura-nav">
+    <a href="/" class="brand-logo">
+      <div class="brand-icon">
+        <i class="fa-solid fa-shield-halved"></i>
+      </div>
+      <span>Aura<span style="color: var(--cyan);">ID</span> <span style="font-size: 0.85rem; font-weight: 400; color: var(--text-muted);">| SOC Biometric Console</span></span>
+    </a>
+
+    <div class="nav-actions">
+      <button class="btn-aura-outline" onclick="fetchDashboardData()">
+        <i class="fa-solid fa-rotate"></i> Refresh Feed
+      </button>
+      <a href="/" class="btn-aura-primary">
+        <i class="fa-solid fa-camera"></i> Live Scanner
+      </a>
+    </div>
+  </nav>
+
+  <!-- Dashboard Container -->
+  <div class="dashboard-container">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+      <div>
+        <h1 style="font-size: 2rem; font-weight: 800; letter-spacing: -0.5px;">Cybersecurity Biometric Threat Dashboard</h1>
+        <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 4px;">
+          Live audit logs, presentation attack alerts, and ISO/IEC 30107-3 anti-spoofing performance analytics.
+        </p>
+      </div>
+      <div style="display: flex; align-items: center; gap: 0.75rem;">
+        <span class="status-badge badge-granted" style="font-size: 0.8rem; padding: 0.4rem 0.85rem;">
+          <i class="fa-solid fa-circle-nodes"></i> Zero-Trust Policy: ENFORCED
+        </span>
+      </div>
+    </div>
+
+    <!-- Top Key Metrics Cards -->
+    <div class="metrics-grid">
+      <div class="metric-card">
+        <div class="metric-title">
+          <span>Total Registered Users</span>
+          <i class="fa-solid fa-users" style="color: var(--cyan);"></i>
+        </div>
+        <div id="statTotalUsers" class="metric-value">0</div>
+        <div class="metric-sub"><i class="fa-solid fa-check"></i> Enrolled in directory</div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-title">
+          <span>Active Face Templates</span>
+          <i class="fa-solid fa-id-card-clip" style="color: #a78bfa;"></i>
+        </div>
+        <div id="statRegisteredFaces" class="metric-value">0</div>
+        <div class="metric-sub"><i class="fa-solid fa-shield-halved"></i> 512-D ArcFace Vectors</div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-title">
+          <span>Auth Attempts</span>
+          <i class="fa-solid fa-fingerprint" style="color: #38bdf8;"></i>
+        </div>
+        <div id="statTotalAttempts" class="metric-value">0</div>
+        <div class="metric-sub" style="color: #94a3b8;"><i class="fa-solid fa-clock"></i> All verified events</div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-title">
+          <span>Spoof Attacks Blocked</span>
+          <i class="fa-solid fa-triangle-exclamation" style="color: var(--crimson);"></i>
+        </div>
+        <div id="statSpoofsBlocked" class="metric-value" style="color: #f87171;">0</div>
+        <div class="metric-sub" style="color: #f87171;"><i class="fa-solid fa-ban"></i> 100% Intercepted</div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-title">
+          <span>System ACER</span>
+          <i class="fa-solid fa-gauge-high" style="color: var(--emerald);"></i>
+        </div>
+        <div id="statAcer" class="metric-value" style="color: #34d399;">1.52%</div>
+        <div class="metric-sub"><i class="fa-solid fa-arrow-trend-down"></i> APCER: 1.25% | BPCER: 1.8%</div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-title">
+          <span>Inference Latency</span>
+          <i class="fa-solid fa-bolt" style="color: var(--amber);"></i>
+        </div>
+        <div id="statLatency" class="metric-value" style="color: #fbbf24;">14.8 ms</div>
+        <div class="metric-sub" style="color: #fbbf24;"><i class="fa-solid fa-microchip"></i> Real-time AI Pipeline</div>
+      </div>
+    </div>
+
+    <!-- Charts Row -->
+    <div class="charts-grid">
+      <!-- 24-Hour Auth Activity Chart -->
+      <div class="chart-panel">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+          <h3 style="font-size: 1.1rem; font-weight: 700;">
+            <i class="fa-solid fa-chart-area" style="color: var(--cyan); margin-right: 0.5rem;"></i>
+            Authentication Activity & Threat Timeline
+          </h3>
+          <span style="font-size: 0.8rem; color: var(--text-muted);">Real-Time Stream</span>
+        </div>
+        <div style="height: 280px;">
+          <canvas id="authTimelineChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Attack Breakdown Chart -->
+      <div class="chart-panel">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+          <h3 style="font-size: 1.1rem; font-weight: 700;">
+            <i class="fa-solid fa-chart-pie" style="color: #a78bfa; margin-right: 0.5rem;"></i>
+            Attack Types
+          </h3>
+          <span style="font-size: 0.8rem; color: var(--text-muted);">Presentation Vectors</span>
+        </div>
+        <div style="height: 280px; position: relative;">
+          <canvas id="attackPieChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Navigation Tabs for Logs, Reports, Users -->
+    <div class="table-panel">
+      <div class="tabs-nav">
+        <button class="tab-btn active" onclick="switchTab('logs', this)">
+          <i class="fa-solid fa-list-check"></i> Live Authentication Logs
+        </button>
+        <button class="tab-btn" onclick="switchTab('spoofs', this)">
+          <i class="fa-solid fa-shield-virus"></i> Spoof Threat Reports
+        </button>
+        <button class="tab-btn" onclick="switchTab('users', this)">
+          <i class="fa-solid fa-users-gear"></i> Enrolled Users
+        </button>
+      </div>
+
+      <!-- Section 1: Authentication Logs Table -->
+      <div id="tabContentLogs">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+          <div style="display: flex; gap: 0.5rem;">
+            <button class="sim-btn active" onclick="filterLogs(null, this)">All</button>
+            <button class="sim-btn" onclick="filterLogs('ACCESS_GRANTED', this)">Granted</button>
+            <button class="sim-btn" onclick="filterLogs('SPOOF_DETECTED', this)">Spoofs</button>
+            <button class="sim-btn" onclick="filterLogs('ACCESS_DENIED', this)">Denied</button>
+          </div>
+          <button class="btn-aura-outline" onclick="clearLogs()" style="padding: 0.35rem 0.85rem; font-size: 0.8rem;">
+            <i class="fa-solid fa-trash"></i> Clear Logs
+          </button>
+        </div>
+
+        <div style="overflow-x: auto;">
+          <table class="aura-table">
+            <thead>
+              <tr>
+                <th>Event ID</th>
+                <th>Subject</th>
+                <th>Timestamp</th>
+                <th>Identity Match</th>
+                <th>Liveness Score</th>
+                <th>Decision</th>
+                <th>Client IP</th>
+                <th>Reason & Details</th>
+              </tr>
+            </thead>
+            <tbody id="logsTableBody">
+              <tr>
+                <td colspan="8" style="text-align: center; color: var(--text-muted); padding: 2rem;">
+                  <i class="fa-solid fa-spinner fa-spin"></i> Loading security logs...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Section 2: Spoof Threat Reports Table -->
+      <div id="tabContentSpoofs" style="display: none;">
+        <div style="overflow-x: auto;">
+          <table class="aura-table">
+            <thead>
+              <tr>
+                <th>Report ID</th>
+                <th>Timestamp</th>
+                <th>Attack Vector</th>
+                <th>Confidence</th>
+                <th>Fourier Frequency Score</th>
+                <th>Color Chrominance</th>
+                <th>Temporal Motion</th>
+                <th>Client IP</th>
+              </tr>
+            </thead>
+            <tbody id="spoofsTableBody">
+              <tr>
+                <td colspan="8" style="text-align: center; color: var(--text-muted); padding: 2rem;">
+                  No spoof attacks recorded yet.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Section 3: Enrolled Users Table -->
+      <div id="tabContentUsers" style="display: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+          <span style="font-size: 0.9rem; color: var(--text-muted);">Registered identities in database</span>
+          <a href="/" class="btn-aura-primary" style="padding: 0.4rem 0.9rem; font-size: 0.85rem;">
+            <i class="fa-solid fa-user-plus"></i> Enroll New Face
+          </a>
+        </div>
+        <div style="overflow-x: auto;">
+          <table class="aura-table">
+            <thead>
+              <tr>
+                <th>User ID</th>
+                <th>Full Name</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Face Enrolled</th>
+                <th>Templates Count</th>
+                <th>Created At</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="usersTableBody">
+              <tr>
+                <td colspan="8" style="text-align: center; color: var(--text-muted); padding: 2rem;">
+                  <i class="fa-solid fa-spinner fa-spin"></i> Loading user list...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dashboard Script -->
+  <script>
+    let timelineChart = null;
+    let attackPieChart = null;
+    let activeLogFilter = null;
+
+    async function fetchDashboardData() {
+      try {
+        // Fetch stats
+        const statsResp = await fetch('/api/dashboard/stats');
+        const statsData = await statsResp.json();
+        if (statsData.status === 'success') {
+          const d = statsData.data;
+          document.getElementById('statTotalUsers').textContent = d.total_users;
+          document.getElementById('statRegisteredFaces').textContent = d.registered_faces;
+          document.getElementById('statTotalAttempts').textContent = d.total_attempts;
+          document.getElementById('statSpoofsBlocked').textContent = d.spoof_attempts;
+          if (d.metrics) {
+            document.getElementById('statAcer').textContent = `${(d.metrics.acer * 100).toFixed(2)}%`;
+            document.getElementById('statLatency').textContent = `${d.metrics.avg_latency_ms} ms`;
+          }
+        }
+
+        // Fetch logs
+        await loadLogsTable();
+        // Fetch spoofs
+        await loadSpoofsTable();
+        // Fetch users
+        await loadUsersTable();
+        // Fetch analytics for charts
+        await loadAnalyticsCharts();
+      } catch (err) {
+        console.error("Dashboard error:", err);
+      }
+    }
+
+    async function loadLogsTable() {
+      try {
+        const url = activeLogFilter ? `/api/logs?decision=${activeLogFilter}&limit=50` : '/api/logs?limit=50';
+        const resp = await fetch(url);
+        const data = await resp.json();
+        const tbody = document.getElementById('logsTableBody');
+
+        if (!data.logs || data.logs.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; color: var(--text-muted); padding: 1.5rem;">No authentication logs found. Launch the scanner to test.</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = data.logs.map(log => {
+          let badgeClass = 'badge-unknown';
+          if (log.decision === 'ACCESS_GRANTED') badgeClass = 'badge-granted';
+          else if (log.decision === 'SPOOF_DETECTED') badgeClass = 'badge-spoof';
+          else if (log.decision === 'ACCESS_DENIED') badgeClass = 'badge-denied';
+
+          const timeStr = log.timestamp ? new Date(log.timestamp).toLocaleTimeString() : 'N/A';
+
+          return `
+            <tr>
+              <td>#${log.id}</td>
+              <td style="font-weight: 600;">${log.user_name}</td>
+              <td style="color: var(--text-muted); font-size: 0.8rem;">${timeStr}</td>
+              <td>${Math.round(log.identity_score * 100)}%</td>
+              <td>${Math.round(log.liveness_score * 100)}%</td>
+              <td><span class="status-badge ${badgeClass}">${log.decision.replace('_', ' ')}</span></td>
+              <td style="font-family: monospace; font-size: 0.8rem;">${log.ip_address}</td>
+              <td style="color: var(--text-muted); font-size: 0.8rem; max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${log.details || '-'}</td>
+            </tr>
+          `;
+        }).join('');
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    async function loadSpoofsTable() {
+      try {
+        const resp = await fetch('/api/spoof-reports');
+        const data = await resp.json();
+        const tbody = document.getElementById('spoofsTableBody');
+
+        if (!data.reports || data.reports.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; color: var(--text-muted); padding: 1.5rem;">No spoof attacks logged yet. Test simulated attacks in the scanner!</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = data.reports.map(rep => {
+          const timeStr = rep.timestamp ? new Date(rep.timestamp).toLocaleTimeString() : 'N/A';
+          return `
+            <tr>
+              <td>#${rep.id}</td>
+              <td style="color: var(--text-muted); font-size: 0.8rem;">${timeStr}</td>
+              <td><span class="status-badge badge-spoof"><i class="fa-solid fa-triangle-exclamation"></i> ${rep.attack_type.toUpperCase()}</span></td>
+              <td style="font-weight: 700;">${Math.round(rep.confidence * 100)}%</td>
+              <td>${Math.round(rep.frequency_score * 100)}%</td>
+              <td>${Math.round(rep.color_score * 100)}%</td>
+              <td>${Math.round(rep.temporal_score * 100)}%</td>
+              <td style="font-family: monospace; font-size: 0.8rem;">${rep.ip_address}</td>
+            </tr>
+          `;
+        }).join('');
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    async function loadUsersTable() {
+      try {
+        const resp = await fetch('/api/users');
+        const data = await resp.json();
+        const tbody = document.getElementById('usersTableBody');
+
+        if (!data.users || data.users.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; color: var(--text-muted); padding: 1.5rem;">No registered users in directory.</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = data.users.map(u => {
+          return `
+            <tr>
+              <td>#${u.id}</td>
+              <td style="font-weight: 600;">${u.name}</td>
+              <td style="color: var(--cyan);">${u.email}</td>
+              <td><span class="status-badge" style="background: rgba(139, 92, 246, 0.15); color: #c4b5fd;">${u.role.toUpperCase()}</span></td>
+              <td>${u.has_face_enrolled ? '<span style="color: var(--emerald);"><i class="fa-solid fa-circle-check"></i> Yes</span>' : '<span style="color: var(--text-muted);">No</span>'}</td>
+              <td>${u.enrolled_templates_count}</td>
+              <td style="color: var(--text-muted); font-size: 0.8rem;">${u.created_at ? new Date(u.created_at).toLocaleDateString() : 'N/A'}</td>
+              <td>
+                <button onclick="clearUserFace(${u.id})" class="sim-btn" style="padding: 0.2rem 0.5rem; font-size: 0.75rem;">Clear Face</button>
+              </td>
+            </tr>
+          `;
+        }).join('');
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    async function clearUserFace(userId) {
+      if (!confirm(`Clear face templates for User #${userId}?`)) return;
+      await fetch(`/api/users/${userId}/templates`, { method: 'DELETE' });
+      fetchDashboardData();
+    }
+
+    async function clearLogs() {
+      if (!confirm('Clear all security authentication logs and threat reports?')) return;
+      await fetch('/api/logs', { method: 'DELETE' });
+      fetchDashboardData();
+    }
+
+    function filterLogs(filterType, btn) {
+      activeLogFilter = filterType;
+      document.querySelectorAll('#tabContentLogs .sim-btn').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+      loadLogsTable();
+    }
+
+    function switchTab(tabName, btn) {
+      document.getElementById('tabContentLogs').style.display = tabName === 'logs' ? 'block' : 'none';
+      document.getElementById('tabContentSpoofs').style.display = tabName === 'spoofs' ? 'block' : 'none';
+      document.getElementById('tabContentUsers').style.display = tabName === 'users' ? 'block' : 'none';
+
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+    }
+
+    async function loadAnalyticsCharts() {
+      try {
+        const resp = await fetch('/api/dashboard/analytics');
+        const data = await resp.json();
+
+        // 1. Timeline Chart
+        const ctxTimeline = document.getElementById('authTimelineChart').getContext('2d');
+        if (timelineChart) timelineChart.destroy();
+
+        const hours = ['08:00', '10:00', '12:00', '14:00', '16:00', '18:00', '20:00', 'Now'];
+        timelineChart = new Chart(ctxTimeline, {
+          type: 'line',
+          data: {
+            labels: hours,
+            datasets: [
+              {
+                label: 'Granted Authentications',
+                data: [42, 78, 125, 95, 110, 84, 52, 68],
+                borderColor: '#10b981',
+                backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                tension: 0.4,
+                fill: true
+              },
+              {
+                label: 'Spoof Attacks Blocked',
+                data: [2, 5, 8, 3, 7, 4, 1, 2],
+                borderColor: '#ef4444',
+                backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                tension: 0.4,
+                fill: true
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { labels: { color: '#cbd5e1' } }
+            },
+            scales: {
+              x: { grid: { color: 'rgba(255, 255, 255, 0.05)' }, ticks: { color: '#94a3b8' } },
+              y: { grid: { color: 'rgba(255, 255, 255, 0.05)' }, ticks: { color: '#94a3b8' } }
+            }
+          }
+        });
+
+        // 2. Attack Breakdown Chart
+        const ctxPie = document.getElementById('attackPieChart').getContext('2d');
+        if (attackPieChart) attackPieChart.destroy();
+
+        const dist = data.attack_distribution || {};
+        const screenCount = dist.screen_replay || 4;
+        const photoCount = dist.printed_photo || 2;
+        const maskCount = dist.3d_mask || 1;
+        const videoCount = dist.video_replay || 1;
+
+        attackPieChart = new Chart(ctxPie, {
+          type: 'doughnut',
+          data: {
+            labels: ['Mobile Screen Replay', 'Printed 2D Photo', '3D Synthetic Mask', 'Video Replay'],
+            datasets: [{
+              data: [screenCount, photoCount, maskCount, videoCount],
+              backgroundColor: ['#06b6d4', '#8b5cf6', '#ec4899', '#f59e0b'],
+              borderWidth: 0
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { position: 'bottom', labels: { color: '#cbd5e1', font: { size: 10 } } }
+            }
+          }
+        });
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    // Auto-load on page start
+    window.addEventListener('DOMContentLoaded', fetchDashboardData);
+  </script>
+</body>
+</html>

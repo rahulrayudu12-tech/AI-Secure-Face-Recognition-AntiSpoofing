@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AuraID — Secure AI Face Recognition & Anti-Spoofing Platform</title>
+  <!-- Google Fonts & FontAwesome -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Aura Cyber CSS -->
+  <link rel="stylesheet" href="/css/aura-cyber.css">
+</head>
+<body>
+  <!-- Ambient background glow orbs -->
+  <div class="ambient-glow-1"></div>
+  <div class="ambient-glow-2"></div>
+
+  <!-- Navigation Bar -->
+  <nav class="aura-nav">
+    <a href="/" class="brand-logo">
+      <div class="brand-icon">
+        <i class="fa-solid fa-shield-halved"></i>
+      </div>
+      <span>Aura<span style="color: var(--cyan);">ID</span></span>
+    </a>
+
+    <ul class="nav-links">
+      <li><a href="#features">Features</a></li>
+      <li><a href="#pipeline">AI Pipeline</a></li>
+      <li><a href="#industries">Industries</a></li>
+      <li><a href="/dashboard">Admin Dashboard</a></li>
+      <li><a href="/docs">API Docs</a></li>
+    </ul>
+
+    <div class="nav-actions">
+      <button class="btn-aura-outline" onclick="openEnrollModal()">
+        <i class="fa-solid fa-user-plus"></i> Enroll Face
+      </button>
+      <button class="btn-aura-primary" onclick="openScannerModal()">
+        <i class="fa-solid fa-camera"></i> Launch Scanner
+      </button>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <header class="hero-section">
+    <div class="hero-content">
+      <div style="display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(139, 92, 246, 0.15); border: 1px solid var(--border-subtle); padding: 0.35rem 0.9rem; border-radius: 9999px; margin-bottom: 1.25rem;">
+        <span style="width: 8px; height: 8px; border-radius: 50%; background: var(--cyan); box-shadow: 0 0 10px var(--cyan);"></span>
+        <span style="font-size: 0.8rem; font-weight: 700; color: #c4b5fd; text-transform: uppercase; letter-spacing: 0.5px;">Next-Gen Biometric Cybersecurity</span>
+      </div>
+      
+      <h1>Unlock the Future with <span class="gradient-text">AI-Powered Face Recognition</span></h1>
+      
+      <p class="hero-subtitle">
+        Enterprise-grade facial authentication and multi-spectral anti-spoofing platform engineered for zero-trust environments. Prevents presentation attacks using 2D Fourier texture analysis, chromatic liveness, and temporal micro-motion fusion.
+      </p>
+
+      <div class="hero-buttons">
+        <button class="btn-aura-primary" onclick="openScannerModal()">
+          <i class="fa-solid fa-fingerprint"></i> Start Face Authentication
+        </button>
+        <a href="/dashboard" class="btn-aura-outline">
+          <i class="fa-solid fa-chart-line"></i> Security Dashboard
+        </a>
+      </div>
+
+      <div class="hero-tags">
+        <div class="hero-tag">
+          <span class="dot"></span>
+          <span>Zero-Trust Protocol</span>
+        </div>
+        <div class="hero-tag">
+          <span class="dot"></span>
+          <span>RetinaFace & ArcFace</span>
+        </div>
+        <div class="hero-tag">
+          <span class="dot"></span>
+          <span>ACER &lt; 1.5%</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Hero Biometric Visualizer Card (Matching Figma Aesthetic) -->
+    <div class="hero-visualizer">
+      <div class="hud-card">
+        <div class="hud-header">
+          <div class="hud-title">
+            <i class="fa-solid fa-crosshairs"></i> Biometric HUD Scanner
+          </div>
+          <span class="hud-status-badge">
+            <i class="fa-solid fa-circle-check"></i> Live Guard Active
+          </span>
+        </div>
+
+        <div class="hud-face-frame">
+          <div class="hud-corner top-left"></div>
+          <div class="hud-corner top-right"></div>
+          <div class="hud-corner bottom-left"></div>
+          <div class="hud-corner bottom-right"></div>
+          <div class="hud-scan-line"></div>
+
+          <div class="hud-face-avatar">
+            <i class="fa-solid fa-user-astronaut" style="font-size: 5rem; color: rgba(167, 139, 250, 0.4);"></i>
+            <div class="hud-landmarks">
+              <span class="landmark-dot" style="top: 25%; left: 35%;"></span>
+              <span class="landmark-dot" style="top: 25%; right: 35%;"></span>
+              <span class="landmark-dot" style="top: 45%; left: 50%; transform: translateX(-50%);"></span>
+              <span class="landmark-dot" style="top: 65%; left: 38%;"></span>
+              <span class="landmark-dot" style="top: 65%; right: 38%;"></span>
+            </div>
+          </div>
+
+          <div class="hud-floating-pill">
+            <i class="fa-solid fa-shield-check" style="color: var(--emerald);"></i>
+            <span>Identity Match: <strong>99.4%</strong> | Liveness: <strong>Bona Fide</strong></span>
+          </div>
+        </div>
+
+        <div class="hud-metrics-row">
+          <div class="hud-mini-card">
+            <div class="hud-mini-label">MultiFTNet (2D-FFT)</div>
+            <div class="hud-mini-val" style="color: var(--cyan);">98.2% <span style="font-size: 0.75rem; color: var(--emerald);">LIVE</span></div>
+          </div>
+          <div class="hud-mini-card">
+            <div class="hud-mini-label">MiniFASNet (Color)</div>
+            <div class="hud-mini-val" style="color: #a78bfa;">96.8% <span style="font-size: 0.75rem; color: var(--emerald);">VALID</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Features Section -->
+  <section id="features" class="section-features">
+    <div class="section-header">
+      <span class="section-tag">Core Capabilities</span>
+      <h2 class="section-title">Why Choose Us for Your Face Recognition Technology?</h2>
+      <p style="color: var(--text-muted); max-width: 600px; margin: 0 auto;">
+        Advanced biometrics fortified against spoofing, replay attacks, and presentation counterfeits.
+      </p>
+    </div>
+
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div class="feature-icon-box" style="color: var(--cyan);">
+          <i class="fa-solid fa-shield-virus"></i>
+        </div>
+        <h3 class="feature-title">Safe Access & Space</h3>
+        <p class="feature-desc">
+          Automated zero-touch access control granting entry only when identity similarity and multi-spectral liveness both exceed stringent cybersecurity thresholds.
+        </p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon-box" style="color: #a78bfa;">
+          <i class="fa-solid fa-fingerprint"></i>
+        </div>
+        <h3 class="feature-title">Enhanced Anti-Spoofing</h3>
+        <p class="feature-desc">
+          Triple-tier liveness defense: MultiFTNet Fourier frequency analysis, MiniFASNet chromatic reflection analysis, and temporal micro-motion optical flow.
+        </p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon-box" style="color: var(--emerald);">
+          <i class="fa-solid fa-network-wired"></i>
+        </div>
+        <h3 class="feature-title">Seamless Integration</h3>
+        <p class="feature-desc">
+          High-performance REST API with real-time JSON webhooks, Swagger documentation, JWT security, and Dockerized microservice architecture.
+        </p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon-box" style="color: var(--amber);">
+          <i class="fa-brands fa-google"></i>
+        </div>
+        <h3 class="feature-title">Google Colab & Cloud Ready</h3>
+        <p class="feature-desc">
+          Train on CelebA-Spoof and CASIA-FASD datasets, evaluate APCER/BPCER curves, and deploy live public web tunnels directly inside Google Colab GPU notebooks.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pipeline Section -->
+  <section id="pipeline" class="pipeline-section">
+    <div class="section-header">
+      <span class="section-tag">Zero-Trust Pipeline</span>
+      <h2 class="section-title">The 10-Step Authentication Architecture</h2>
+      <p style="color: var(--text-muted); max-width: 640px; margin: 0 auto;">
+        Every camera frame undergoes full sequential biometric validation in under 20ms.
+      </p>
+    </div>
+
+    <div class="pipeline-cards">
+      <div class="pipeline-step-card">
+        <div class="pipeline-step-num">Step 01 & 02</div>
+        <h4 class="pipeline-step-title">RetinaFace Detection</h4>
+        <p class="pipeline-step-desc">Locates faces, extracts 5 facial landmarks, and computes image sharpness and lighting quality scores.</p>
+      </div>
+
+      <div class="pipeline-step-card">
+        <div class="pipeline-step-num">Step 03 & 04</div>
+        <h4 class="pipeline-step-title">ArcFace Embeddings</h4>
+        <p class="pipeline-step-desc">Normalizes face alignment and maps facial contours to 512-dimensional unit hypersphere feature vectors.</p>
+      </div>
+
+      <div class="pipeline-step-card">
+        <div class="pipeline-step-num">Step 05 & 06</div>
+        <h4 class="pipeline-step-title">MultiFTNet & MiniFASNet</h4>
+        <p class="pipeline-step-desc">Analyzes 2D Fourier spectrum for screen moiré grids and evaluates chromatic skin hemoglobin absorption.</p>
+      </div>
+
+      <div class="pipeline-step-card">
+        <div class="pipeline-step-num">Step 07 & 08</div>
+        <h4 class="pipeline-step-title">Temporal & Fusion</h4>
+        <p class="pipeline-step-desc">Verifies involuntary micro-motion dynamics and fuses scores via strict zero-trust access decision rule.</p>
+      </div>
+
+      <div class="pipeline-step-card">
+        <div class="pipeline-step-num">Step 09 & 10</div>
+        <h4 class="pipeline-step-title">Decision & Audit</h4>
+        <p class="pipeline-step-desc">Issues ACCESS_GRANTED or flags presentation attacks in tamper-proof cryptographic audit logs.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Industries Section -->
+  <section id="industries" class="section-features" style="margin-top: 3rem;">
+    <div class="section-header">
+      <span class="section-tag">Industry Applications</span>
+      <h2 class="section-title">Engineered for High-Security Environments</h2>
+    </div>
+
+    <div class="feature-grid">
+      <div class="feature-card">
+        <h3 class="feature-title"><i class="fa-solid fa-building-columns" style="color: var(--cyan); margin-right: 0.5rem;"></i> Financial Services</h3>
+        <p class="feature-desc">Prevent KYC spoofing, ATM fraud, and unauthorized mobile banking logins with sub-second liveness checks.</p>
+      </div>
+      <div class="feature-card">
+        <h3 class="feature-title"><i class="fa-solid fa-plane-departure" style="color: #a78bfa; margin-right: 0.5rem;"></i> Border & Airports</h3>
+        <p class="feature-desc">Automated e-Gates matching travelers against biometric passports while rejecting high-resolution silicone masks.</p>
+      </div>
+      <div class="feature-card">
+        <h3 class="feature-title"><i class="fa-solid fa-hospital" style="color: var(--emerald); margin-right: 0.5rem;"></i> Healthcare & Clinics</h3>
+        <p class="feature-desc">Touchless hygienic staff authorization for restricted pharmaceutical cabinets and operating rooms.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Interactive Live Scanner Modal -->
+  <div id="scannerModal" class="aura-modal">
+    <div class="modal-content">
+      <button class="modal-close-btn" onclick="closeScannerModal()">&times;</button>
+      
+      <div style="display: flex; align-items: center; justify-content: space-between;">
+        <div>
+          <h2 style="font-size: 1.5rem; font-weight: 700; color: #fff;">
+            <i class="fa-solid fa-satellite-dish" style="color: var(--cyan);"></i> Real-Time Biometric Scanner
+          </h2>
+          <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 2px;">
+            Align your face inside the reticle. Live AI inference evaluates identity and multi-model liveness in real-time.
+          </p>
+        </div>
+        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+          <button class="btn-aura-outline" style="padding: 0.4rem 0.75rem; font-size: 0.75rem;" onclick="loadPresetFace('live')">
+            <i class="fa-solid fa-user-check" style="color: var(--emerald);"></i> Test Live Face
+          </button>
+          <button class="btn-aura-outline" style="padding: 0.4rem 0.75rem; font-size: 0.75rem;" onclick="loadPresetFace('screen')">
+            <i class="fa-solid fa-mobile-screen" style="color: var(--cyan);"></i> Test Screen Spoof
+          </button>
+          <button class="btn-aura-outline" style="padding: 0.4rem 0.75rem; font-size: 0.75rem;" onclick="loadPresetFace('photo')">
+            <i class="fa-solid fa-print" style="color: #a78bfa;"></i> Test Print Spoof
+          </button>
+          <label class="btn-aura-outline" style="padding: 0.4rem 0.75rem; font-size: 0.75rem; cursor: pointer;">
+            <i class="fa-solid fa-upload"></i> Upload Image
+            <input type="file" id="scannerFileInput" accept="image/*" style="display: none;" onchange="handleFileUpload(event)">
+          </label>
+        </div>
+      </div>
+
+      <div class="scanner-layout">
+        <!-- Video Feed with HUD Canvas -->
+        <div class="scanner-video-box">
+          <video id="webcamVideo" autoplay muted playsinline></video>
+          <canvas id="webcamCanvas"></canvas>
+          <div class="hud-corner top-left"></div>
+          <div class="hud-corner top-right"></div>
+          <div class="hud-corner bottom-left"></div>
+          <div class="hud-corner bottom-right"></div>
+          <div class="hud-scan-line"></div>
+          <!-- Live Camera Status Tag -->
+          <div id="cameraStatusPill" style="position: absolute; top: 12px; left: 16px; background: rgba(15, 11, 36, 0.85); backdrop-filter: blur(8px); border: 1px solid rgba(255, 255, 255, 0.15); padding: 4px 10px; border-radius: 9999px; font-size: 0.72rem; font-weight: 700; color: #34d399; display: flex; align-items: center; gap: 6px; z-index: 10;">
+            <span style="width: 7px; height: 7px; border-radius: 50%; background: #10b981; box-shadow: 0 0 8px #10b981; animation: pulseLandmark 1.2s infinite alternate;"></span>
+            <span id="cameraStatusText">LIVE WEBCAM ACTIVE</span>
+          </div>
+        </div>
+
+        <!-- Metric Meters and Verdict Panel -->
+        <div class="scanner-meters-panel">
+          <!-- ArcFace Meter -->
+          <div class="meter-card">
+            <div class="meter-header">
+              <span><i class="fa-solid fa-user-check" style="color: var(--cyan);"></i> ArcFace Identity Match</span>
+              <span id="meterIdentityVal" style="font-weight: 700;">0.0%</span>
+            </div>
+            <div class="meter-progress-track">
+              <div id="meterIdentityFill" class="meter-progress-fill fill-cyan" style="width: 0%;"></div>
+            </div>
+          </div>
+
+          <!-- MultiFTNet Meter -->
+          <div class="meter-card">
+            <div class="meter-header">
+              <span><i class="fa-solid fa-wave-square" style="color: #a78bfa;"></i> MultiFTNet (2D-FFT Fourier)</span>
+              <span id="meterFourierVal" style="font-weight: 700;">0.0%</span>
+            </div>
+            <div class="meter-progress-track">
+              <div id="meterFourierFill" class="meter-progress-fill fill-purple" style="width: 0%;"></div>
+            </div>
+          </div>
+
+          <!-- MiniFASNet Meter -->
+          <div class="meter-card">
+            <div class="meter-header">
+              <span><i class="fa-solid fa-palette" style="color: var(--emerald);"></i> MiniFASNet (Color Reflection)</span>
+              <span id="meterColorVal" style="font-weight: 700;">0.0%</span>
+            </div>
+            <div class="meter-progress-track">
+              <div id="meterColorFill" class="meter-progress-fill fill-emerald" style="width: 0%;"></div>
+            </div>
+          </div>
+
+          <!-- LSTM Temporal Meter -->
+          <div class="meter-card">
+            <div class="meter-header">
+              <span><i class="fa-solid fa-clock-rotate-left" style="color: var(--amber);"></i> Temporal Micro-Motion</span>
+              <span id="meterLstmVal" style="font-weight: 700;">0.0%</span>
+            </div>
+            <div class="meter-progress-track">
+              <div id="meterLstmFill" class="meter-progress-fill fill-emerald" style="width: 0%;"></div>
+            </div>
+          </div>
+
+          <!-- Fused Verdict Banner -->
+          <div id="verdictBanner" class="verdict-banner idle">
+            <i class="fa-solid fa-spinner fa-spin"></i> Initializing Biometric Feed...
+          </div>
+          <div id="verdictMessage" style="font-size: 0.8rem; color: var(--text-muted); text-align: center; margin-top: -0.25rem;">
+            Awaiting face detection in camera field
+          </div>
+
+          <!-- Interactive Spoof Attack Simulator Buttons -->
+          <div style="margin-top: 0.75rem;">
+            <div style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700; margin-bottom: 0.35rem;">
+              <i class="fa-solid fa-vial"></i> Presentation Attack Simulator:
+            </div>
+            <div class="sim-toolbar">
+              <button class="sim-btn active" onclick="setSimulate(null, this)">🛡️ Bona Fide Real</button>
+              <button class="sim-btn" onclick="setSimulate('mobile_screen', this)">📱 Screen Replay</button>
+              <button class="sim-btn" onclick="setSimulate('printed_photo', this)">📄 Printed Photo</button>
+              <button class="sim-btn" onclick="setSimulate('3d_mask', this)">🎭 3D Mask</button>
+              <button class="sim-btn" onclick="setSimulate('replay_video', this)">🎥 Video Replay</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Face Enrollment Modal -->
+  <div id="enrollModal" class="aura-modal">
+    <div class="modal-content" style="max-width: 580px;">
+      <button class="modal-close-btn" onclick="closeEnrollModal()">&times;</button>
+      <h2 style="font-size: 1.4rem; font-weight: 700; margin-bottom: 0.5rem;">
+        <i class="fa-solid fa-id-badge" style="color: var(--primary-glow);"></i> Enroll New Face Template
+      </h2>
+      <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1.5rem;">
+        Register your facial features for ArcFace identity matching. Ensure good lighting and look directly into the camera.
+      </p>
+
+      <form id="enrollForm" onsubmit="handleEnrollSubmit(event)">
+        <div style="margin-bottom: 1rem;">
+          <label style="display: block; font-size: 0.85rem; color: #cbd5e1; margin-bottom: 0.35rem;">Full Name</label>
+          <input type="text" id="enrollName" required placeholder="e.g. Dr. Alex Mercer" style="width: 100%; padding: 0.75rem; border-radius: 10px; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-subtle); color: #fff;">
+        </div>
+
+        <div style="margin-bottom: 1rem;">
+          <label style="display: block; font-size: 0.85rem; color: #cbd5e1; margin-bottom: 0.35rem;">Email Address</label>
+          <input type="email" id="enrollEmail" required placeholder="alex.mercer@cyber.io" style="width: 100%; padding: 0.75rem; border-radius: 10px; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-subtle); color: #fff;">
+        </div>
+
+        <div style="margin-bottom: 1.25rem;">
+          <label style="display: block; font-size: 0.85rem; color: #cbd5e1; margin-bottom: 0.35rem;">Face Image Capture / Upload</label>
+          <div style="display: flex; gap: 0.75rem; align-items: center;">
+            <button type="button" class="btn-aura-outline" onclick="captureLiveForEnroll()" style="font-size: 0.85rem;">
+              <i class="fa-solid fa-camera"></i> Snapshot from Camera
+            </button>
+            <span style="font-size: 0.8rem; color: var(--text-muted);">or</span>
+            <label class="btn-aura-outline" style="font-size: 0.85rem; cursor: pointer;">
+              <i class="fa-solid fa-file-image"></i> Select File
+              <input type="file" id="enrollFileInput" accept="image/*" style="display: none;" onchange="handleEnrollFileSelected(event)">
+            </label>
+          </div>
+          <div id="enrollPreviewBox" style="margin-top: 1rem; display: none; text-align: center;">
+            <img id="enrollPreviewImg" src="" style="width: 120px; height: 120px; object-fit: cover; border-radius: 14px; border: 2px solid var(--primary);">
+            <div id="enrollPreviewStatus" style="font-size: 0.8rem; color: var(--emerald); margin-top: 0.3rem;">Face image ready</div>
+          </div>
+        </div>
+
+        <button type="submit" id="enrollSubmitBtn" class="btn-aura-primary" style="width: 100%; justify-content: center; padding: 0.85rem;">
+          <i class="fa-solid fa-check"></i> Register User & Enroll Template
+        </button>
+        <div id="enrollFeedback" style="margin-top: 0.85rem; font-size: 0.85rem; text-align: center;"></div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="aura-footer">
+    <div style="max-width: 1280px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: gap: 1rem;">
+      <div style="display: flex; align-items: center; gap: 0.75rem;">
+        <div class="brand-icon" style="width: 28px; height: 28px; font-size: 0.8rem;">
+          <i class="fa-solid fa-shield-halved"></i>
+        </div>
+        <span style="font-weight: 700; color: #fff;">AuraID Biometric Shield</span>
+      </div>
+      <div>
+        <span>ISO/IEC 30107-3 Presentation Attack Detection Compliant</span>
+      </div>
+      <div>
+        <a href="/dashboard" style="color: var(--cyan); text-decoration: none; margin-right: 1.25rem;">Admin Dashboard</a>
+        <a href="/docs" style="color: var(--cyan); text-decoration: none;">API Documentation</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="/js/aura-webcam.js"></script>
+  <script>
+    let scanner = null;
+    let enrolledPhotoBase64 = null;
+
+    function openScannerModal() {
+      document.getElementById('scannerModal').classList.add('active');
+      if (!scanner) {
+        scanner = new AuraWebcamScanner({
+          videoId: 'webcamVideo',
+          canvasId: 'webcamCanvas',
+          fps: 4,
+          onResult: updateScannerHUD
+        });
+      }
+      scanner.startCamera().then(res => {
+        const pillText = document.getElementById('cameraStatusText');
+        const pill = document.getElementById('cameraStatusPill');
+        const pillDot = pill ? pill.querySelector('span') : null;
+        if (res && res.success) {
+          if (pillText) pillText.textContent = 'LIVE WEBCAM STREAMING';
+          if (pillDot) pillDot.style.background = '#10b981';
+        } else {
+          if (pillText) pillText.textContent = 'CAMERA BLOCKED OR IN USE — CLICK ALLOW OR USE DEMO BUTTONS';
+          if (pillDot) pillDot.style.background = '#f59e0b';
+        }
+      });
+    }
+
+    async function loadPresetFace(type) {
+      let path = '/assets/sample_live_face.jpg';
+      let simAttack = null;
+      if (type === 'screen') {
+        path = '/assets/sample_screen_spoof.jpg';
+        simAttack = 'mobile_screen';
+      } else if (type === 'photo') {
+        path = '/assets/sample_photo_spoof.jpg';
+        simAttack = 'printed_photo';
+      }
+
+      try {
+        const resp = await fetch(path);
+        const blob = await resp.blob();
+        const reader = new FileReader();
+        reader.onload = async function(e) {
+          const base64 = e.target.result;
+          const authResp = await fetch('/api/authenticate', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ image: base64, simulate_attack: simAttack })
+          });
+          const authData = await authResp.json();
+          updateScannerHUD(authData);
+        };
+        reader.readAsDataURL(blob);
+      } catch (err) {
+        console.error("Failed to load preset face:", err);
+      }
+    }
+
+    function closeScannerModal() {
+      document.getElementById('scannerModal').classList.remove('active');
+      if (scanner) {
+        scanner.stopCamera();
+      }
+    }
+
+    function setSimulate(attackType, btnElement) {
+      if (scanner) {
+        scanner.setAttackSimulation(attackType);
+      }
+      document.querySelectorAll('.sim-btn').forEach(b => b.classList.remove('active'));
+      if (btnElement) btnElement.classList.add('active');
+    }
+
+    function updateScannerHUD(data) {
+      if (!data) return;
+
+      const idFill = document.getElementById('meterIdentityFill');
+      const idVal = document.getElementById('meterIdentityVal');
+      const ftFill = document.getElementById('meterFourierFill');
+      const ftVal = document.getElementById('meterFourierVal');
+      const clFill = document.getElementById('meterColorFill');
+      const clVal = document.getElementById('meterColorVal');
+      const lstmFill = document.getElementById('meterLstmFill');
+      const lstmVal = document.getElementById('meterLstmVal');
+      const banner = document.getElementById('verdictBanner');
+      const msg = document.getElementById('verdictMessage');
+
+      if (!data.face_detected) {
+        banner.className = 'verdict-banner idle';
+        banner.innerHTML = '<i class="fa-solid fa-user-slash"></i> NO FACE DETECTED';
+        msg.textContent = 'Position face centrally within the viewfinder';
+        return;
+      }
+
+      const idScore = Math.round((data.identity_score || 0) * 100);
+      const ftScore = Math.round(((data.scores_breakdown && data.scores_breakdown.multiftnet_fourier) || 0) * 100);
+      const clScore = Math.round(((data.scores_breakdown && data.scores_breakdown.minifasnet_color) || 0) * 100);
+      const tmScore = Math.round(((data.scores_breakdown && data.scores_breakdown.lstm_temporal) || 0) * 100);
+
+      idFill.style.width = `${idScore}%`;
+      idVal.textContent = `${idScore}%`;
+
+      ftFill.style.width = `${ftScore}%`;
+      ftVal.textContent = `${ftScore}%`;
+
+      clFill.style.width = `${clScore}%`;
+      clVal.textContent = `${clScore}%`;
+
+      lstmFill.style.width = `${tmScore}%`;
+      lstmVal.textContent = `${tmScore}%`;
+
+      const decision = data.decision;
+      if (decision === 'ACCESS_GRANTED') {
+        banner.className = 'verdict-banner granted';
+        banner.innerHTML = `<i class="fa-solid fa-lock-open"></i> ACCESS GRANTED — ${data.user ? data.user.name : 'Authorized'}`;
+        msg.textContent = data.status_message || 'Identity confirmed and liveness verified.';
+      } else if (decision === 'SPOOF_DETECTED') {
+        banner.className = 'verdict-banner denied';
+        banner.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> SPOOF BLOCKED: ${(data.attack_type || '').toUpperCase()}`;
+        msg.textContent = data.status_message || 'Presentation attack detected and logged.';
+      } else if (decision === 'UNKNOWN_USER') {
+        banner.className = 'verdict-banner denied';
+        banner.innerHTML = `<i class="fa-solid fa-user-xmark"></i> UNKNOWN SUBJECT`;
+        msg.textContent = 'Subject is live, but not enrolled in database.';
+      } else {
+        banner.className = 'verdict-banner denied';
+        banner.innerHTML = `<i class="fa-solid fa-lock"></i> ACCESS DENIED`;
+        msg.textContent = data.status_message || 'Low identity match score.';
+      }
+    }
+
+    function handleFileUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = async function(e) {
+        const base64 = e.target.result;
+        try {
+          const resp = await fetch('/api/authenticate', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ image: base64, simulate_attack: scanner ? scanner.selectedAttack : null })
+          });
+          const data = await resp.json();
+          updateScannerHUD(data);
+        } catch (err) {
+          console.error(err);
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+
+    // Enrollment functions
+    function openEnrollModal() {
+      document.getElementById('enrollModal').classList.add('active');
+    }
+
+    function closeEnrollModal() {
+      document.getElementById('enrollModal').classList.remove('active');
+    }
+
+    function captureLiveForEnroll() {
+      if (scanner && scanner.isScanning) {
+        enrolledPhotoBase64 = scanner.captureFrameAsBase64();
+        if (enrolledPhotoBase64) {
+          showEnrollPreview(enrolledPhotoBase64);
+          return;
+        }
+      }
+      // If camera not running, prompt user to launch scanner or choose file
+      alert("Please open the Live Scanner once to activate camera, or choose 'Select File'.");
+    }
+
+    function handleEnrollFileSelected(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        enrolledPhotoBase64 = evt.target.result;
+        showEnrollPreview(enrolledPhotoBase64);
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function showEnrollPreview(b64) {
+      document.getElementById('enrollPreviewImg').src = b64;
+      document.getElementById('enrollPreviewBox').style.display = 'block';
+    }
+
+    async function handleEnrollSubmit(e) {
+      e.preventDefault();
+      const feedback = document.getElementById('enrollFeedback');
+      const name = document.getElementById('enrollName').value.trim();
+      const email = document.getElementById('enrollEmail').value.trim();
+
+      if (!enrolledPhotoBase64) {
+        feedback.innerHTML = '<span style="color: var(--crimson);">Please capture or select a face photo.</span>';
+        return;
+      }
+
+      feedback.innerHTML = '<span style="color: var(--cyan);"><i class="fa-solid fa-spinner fa-spin"></i> Registering user & extracting 512-D ArcFace template...</span>';
+
+      try {
+        // Step 1: Register user
+        const regResp = await fetch('/api/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, email, password: 'User@' + Math.floor(1000 + Math.random() * 9000), role: 'user' })
+        });
+        const regData = await regResp.json();
+        
+        let userId = null;
+        if (regResp.ok && regData.user) {
+          userId = regData.user.id;
+        } else if (regResp.status === 409) {
+          // If already exists, fetch users to find ID
+          const uResp = await fetch('/api/users');
+          const uData = await uResp.json();
+          const existing = uData.users.find(u => u.email === email);
+          if (existing) userId = existing.id;
+        }
+
+        if (!userId) {
+          feedback.innerHTML = `<span style="color: var(--crimson);">${regData.message || 'Registration failed.'}</span>`;
+          return;
+        }
+
+        // Step 2: Enroll face template
+        const enrollResp = await fetch('/api/enroll-face', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ user_id: userId, image: enrolledPhotoBase64, angle: 'frontal' })
+        });
+        const enrollData = await enrollResp.json();
+
+        if (enrollResp.ok) {
+          feedback.innerHTML = `<span style="color: var(--emerald);"><i class="fa-solid fa-circle-check"></i> ${enrollData.message} (Quality: ${Math.round(enrollData.quality_score * 100)}%)</span>`;
+          setTimeout(() => {
+            closeEnrollModal();
+            openScannerModal();
+          }, 1500);
+        } else {
+          feedback.innerHTML = `<span style="color: var(--crimson);">${enrollData.message}</span>`;
+        }
+      } catch (err) {
+        feedback.innerHTML = `<span style="color: var(--crimson);">Network error during enrollment.</span>`;
+      }
+    }
+  </script>
+</body>
+</html>
